@@ -111,3 +111,46 @@ SELECT
 	ERROR_LINE() AS ErrorLine,
 	ERROR_MESSAGE() AS ErrorMessage;
 END CATCH
+
+
+------------------------------------------NOTE------------------------------------------
+
+create table Note(
+NoteId int identity(1,1) primary key,
+Title varchar(20) not null,
+Description varchar(max) not null,
+Bgcolor varchar(50) not null,
+IsPin bit,
+IsArchive bit,
+IsRemainder bit,
+IsTrash bit,
+UserId int not null foreign key references Users(UserId),
+RegisteredDate datetime default GETDATE(),
+Remainder datetime,
+ModifiedDate datetime null
+)
+
+select * from Note
+
+
+Create procedure spAddNote(
+@Title varchar(20), 
+@Description varchar(max),
+@BgColor varchar(50),
+@UserId int
+)
+As
+Begin try
+insert into Note(Title,Description,Bgcolor,UserId,ModifiedDate) values(@Title,@Description,@BgColor,@UserId,GetDate())
+Select * from Note where UserId = @UserId
+end try
+Begin catch
+SELECT 
+	ERROR_NUMBER() AS ErrorNumber,
+	ERROR_STATE() AS ErrorState,
+	ERROR_PROCEDURE() AS ErrorProcedure,
+	ERROR_LINE() AS ErrorLine,
+	ERROR_MESSAGE() AS ErrorMessage;
+END CATCH
+
+exec spAddNote 'Note1','FirstNote','red',1;
