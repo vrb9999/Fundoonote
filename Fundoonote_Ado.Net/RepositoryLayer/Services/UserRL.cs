@@ -239,5 +239,34 @@ namespace RepositoryLayer.Services
                 throw ex;
             }
         }
+        public bool ResetPassoword(string email, PasswordModel modelPassword)
+        {
+            SqlConnection connection = new SqlConnection(connectionString);
+            var result = 0;
+
+            try
+            {
+                using (connection)
+                {
+                    connection.Open();
+                    SqlCommand com = new SqlCommand("spResetPassword", connection);
+                    com.CommandType = CommandType.StoredProcedure;
+                    com.Parameters.AddWithValue("@Email", email);
+                    com.Parameters.AddWithValue("@Password", modelPassword.Password);
+                    if (modelPassword.Password == modelPassword.CPassword)
+                    {
+                        result = com.ExecuteNonQuery();
+                    }
+
+                    if (result > 0)
+                        return true;
+                    return false;
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }
