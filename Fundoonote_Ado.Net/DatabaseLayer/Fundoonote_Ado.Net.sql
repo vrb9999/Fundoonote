@@ -51,3 +51,23 @@ SELECT
 END CATCH
 
 exec spGetAllUser
+
+--executing the spLoginUser stored procedure
+Create procedure spLoginUser(
+@Email varchar(50),
+@Password varchar(50)
+)
+As
+Begin try
+select * from Users where Email=@Email and password = @Password
+end try
+Begin catch
+SELECT 
+	ERROR_NUMBER() AS ErrorNumber,
+	ERROR_STATE() AS ErrorState,
+	ERROR_PROCEDURE() AS ErrorProcedure,
+	ERROR_LINE() AS ErrorLine,
+	ERROR_MESSAGE() AS ErrorMessage;
+END CATCH
+
+exec spLoginUser 'vinay@gmail.com' ,'Vinay@123'

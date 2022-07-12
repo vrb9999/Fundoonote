@@ -9,5 +9,6 @@ namespace RepositoryLayer.Interface
     {
         public void AddUser(UsersModel users);
         public List<UserResponseModel> GetAllUsers();
+        public string LoginUser(LoginUserModel loginUser);
     }
 }
