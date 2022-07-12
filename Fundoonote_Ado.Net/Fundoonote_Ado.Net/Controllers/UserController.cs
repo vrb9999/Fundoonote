@@ -31,5 +31,19 @@ namespace Fundoonote_Ado.Net.Controllers
                 throw ex;
             }
         }
+        [HttpGet("GetAllUsers")]
+        public IActionResult GetAllUsers()
+        {
+            try
+            {
+                List<UserResponseModel> users = new List<UserResponseModel>();
+                users = this.userBL.GetAllUsers();
+                return Ok(new { success = true, Message = "All Users fetch successfully", data = users });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

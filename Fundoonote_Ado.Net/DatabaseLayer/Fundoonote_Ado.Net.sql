@@ -35,3 +35,19 @@ END CATCH
 
 --executing the spAddUser stored procedure
 exec spAddUser 'Suresh','Kumar','suresh@gmail.com','Suresh@123'
+
+create procedure spGetAllUser
+As
+Begin try
+select * from Users
+end try
+Begin catch
+SELECT 
+	ERROR_NUMBER() AS ErrorNumber,
+	ERROR_STATE() AS ErrorState,
+	ERROR_PROCEDURE() AS ErrorProcedure,
+	ERROR_LINE() AS ErrorLine,
+	ERROR_MESSAGE() AS ErrorMessage;
+END CATCH
+
+exec spGetAllUser
