@@ -71,3 +71,23 @@ SELECT
 END CATCH
 
 exec spLoginUser 'vinay@gmail.com' ,'Vinay@123'
+
+
+--executing the spForgetPasswordUser stored procedure
+Create procedure spForgetPasswordUser(
+@Email varchar(50)
+)
+As
+Begin try
+select * from Users where Email=@Email 
+end try
+Begin catch
+SELECT 
+	ERROR_NUMBER() AS ErrorNumber,
+	ERROR_STATE() AS ErrorState,
+	ERROR_PROCEDURE() AS ErrorProcedure,
+	ERROR_LINE() AS ErrorLine,
+	ERROR_MESSAGE() AS ErrorMessage;
+END CATCH
+
+exec spForgetPasswordUser 'vinay@gmail.com'
