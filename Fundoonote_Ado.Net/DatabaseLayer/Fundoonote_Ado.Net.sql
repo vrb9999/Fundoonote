@@ -133,7 +133,7 @@ ModifiedDate datetime null
 select * from Note
 
 
-Create procedure spAddNote(
+Alter procedure spAddNote(
 @Title varchar(20), 
 @Description varchar(max),
 @BgColor varchar(50),
@@ -141,7 +141,7 @@ Create procedure spAddNote(
 )
 As
 Begin try
-insert into Note(Title,Description,Bgcolor,UserId,ModifiedDate) values(@Title,@Description,@BgColor,@UserId,GetDate())
+insert into Note(Title,Description,Bgcolor,UserId,IsPin,IsArchive,IsRemainder,IsTrash,ModifiedDate) values(@Title,@Description,@BgColor,@UserId,0,0,0,0,GetDate())
 Select * from Note where UserId = @UserId
 end try
 Begin catch
@@ -153,4 +153,44 @@ SELECT
 	ERROR_MESSAGE() AS ErrorMessage;
 END CATCH
 
-exec spAddNote 'Note1','FirstNote','red',1;
+
+create procedure spGetAllNotes
+As
+Begin try
+select * from Note
+end try
+Begin catch
+SELECT 
+	ERROR_NUMBER() AS ErrorNumber,
+	ERROR_STATE() AS ErrorState,
+	ERROR_PROCEDURE() AS ErrorProcedure,
+	ERROR_LINE() AS ErrorLine,
+	ERROR_MESSAGE() AS ErrorMessage;
+END CATCH
+
+exec spGetAllNotes
+
+
+create procedure spUpdateNote(
+@Title varchar(20), 
+@Description varchar(max),
+@BgColor varchar(50),
+@UserId int,
+@NoteId int,
+@IsPin bit,
+@IsArchive bit,
+@IsTrash bit
+)
+As
+Begin try
+Update Note set Title=@Title, Description=@Description,BgColor=@BgColor,UserId=@UserId,IsPin=@IsPin,IsArchive=@IsArchive,IsTrash=@IsTrash,ModifiedDate=GetDate() where UserId=@UserId and NoteId=@NoteId
+Select * from Note where UserId = @UserId
+end try
+Begin catch
+SELECT 
+	ERROR_NUMBER() AS ErrorNumber,
+	ERROR_STATE() AS ErrorState,
+	ERROR_PROCEDURE() AS ErrorProcedure,
+	ERROR_LINE() AS ErrorLine,
+	ERROR_MESSAGE() AS ErrorMessage;
+END CATCH
