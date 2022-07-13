@@ -26,11 +26,11 @@ namespace BusinessLayer.Services
                 throw ex;
             }
         }
-        public List<NoteResponseModel> GetAllNotes()
+        public async Task<List<NoteResponseModel>> GetAllNotes(int UserId)
         {
             try
             {
-                return this.noteRL.GetAllNotes();
+                return await this.noteRL.GetAllNotes(UserId);
             }
             catch (Exception ex)
             {
@@ -42,6 +42,17 @@ namespace BusinessLayer.Services
             try
             {
                 await this.noteRL.UpdateNote(UserId, NoteId, noteModel);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public async Task DeleteNote(int UserId, int NoteId)
+        {
+            try
+            {
+                await this.noteRL.DeleteNote(UserId, NoteId);
             }
             catch (Exception ex)
             {

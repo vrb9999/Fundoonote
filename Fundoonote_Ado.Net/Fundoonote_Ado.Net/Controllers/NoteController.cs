@@ -40,14 +40,16 @@ namespace Fundoonote_Ado.Net.Controllers
                 throw ex;
             }
         }
+        [Authorize]
         [HttpGet("GetAllNotes")]
-        public IActionResult GetAllNotes()
+        public async Task<IActionResult> GetAllNotes()
         {
             try
             {
-                List<NoteResponseModel> users = new List<NoteResponseModel>();
-                users = this.noteBL.GetAllNotes();
-                return Ok(new { success = true, Message = "All Notes fetch successfully", data = users });
+                var userId = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("userId", StringComparison.InvariantCultureIgnoreCase));
+                int UserId = Int32.Parse(userId.Value);
+                var result = await this.noteBL.GetAllNotes(UserId);
+                return Ok(new { success = true, Message = "All Notes Fetch Successfully", data = result });
             }
             catch (Exception ex)
             {
@@ -55,27 +57,52 @@ namespace Fundoonote_Ado.Net.Controllers
             }
         }
         [Authorize]
-        [HttpPut("UpdateNote/{Noteid}")]
-        public async Task<IActionResult> UpdateNote(int id, UpdateNoteModel noteModel)
+        [HttpPut("UpdateNote")]
+        public async Task<IActionResult> UpdateNote(int NoteId, UpdateNoteModel updateNoteModel)
         {
-            if (noteModel == null)
+            if (updateNoteModel == null)
             {
                 return BadRequest("Note is null.");
             }
             try
             {
-                var userId = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("userId", StringComparison.InvariantCultureIgnoreCase));
+                var userId = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("UserId", StringComparison.InvariantCultureIgnoreCase));
                 int UserId = Int32.Parse(userId.Value);
-                await this.noteBL.UpdateNote(UserId, id, noteModel);
-                return Ok(new { success = true, Message = "Update Successfully" });
+                if (updateNoteModel.Title == "" || updateNoteModel.Title == "string" && updateNoteModel.Description == "string" && updateNoteModel.Bgcolor == "string")
+                {
+                    return this.BadRequest(new { sucess = false, Message = "Please Provide Valid Fields for Note!!" });
+                }
+                await this.noteBL.UpdateNote(UserId, NoteId, updateNoteModel);
+                return Ok(new { sucess = true, Message = "Note Updated Successfully..." });
             }
             catch (Exception ex)
             {
-                if (ex.Message == "Note Doesn't Exist")
+                if (ex.Message == "Note Does Not Exist!!")
                 {
-                    return BadRequest("Note Does not Exist");
+                    return this.BadRequest(new { sucess = false, Message = "Note Does not Exists!!" });
                 }
-                return NotFound(ex.Message);
+                throw ex;
+            }
+        }
+        [Authorize]
+        [HttpDelete("DeleteNote/{NoteId}")]
+        public async Task<IActionResult> DeleteNote(int NoteId)
+        {
+            try
+            {
+                var userId = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("userId", StringComparison.InvariantCultureIgnoreCase));
+                int UserId = Int32.Parse(userId.Value);
+                await this.noteBL.DeleteNote(UserId, NoteId);
+                return Ok(new { success = true, Message = "Deleted SuccessFully" });
+            }
+            catch (Exception ex)
+            {
+                if (ex.Message == "Note Does not Exists")
+                {
+                    return this.BadRequest(new { success = false, Message = "Note Does not Exists" });
+
+                }
+                throw ex;
             }
         }
     }
