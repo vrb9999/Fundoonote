@@ -22,7 +22,7 @@ namespace Fundoonote_Ado.Net.Controllers
 
         [Authorize]
         [HttpPost("AddNote")]
-        public async Task<IActionResult> Index(NoteModel noteModel)
+        public async Task<IActionResult> AddNote(int UserId, NoteModel noteModel)
         {
             if (noteModel == null)
             {
@@ -31,7 +31,7 @@ namespace Fundoonote_Ado.Net.Controllers
             try
             {
                 var userId = User.Claims.FirstOrDefault(x => x.Type.ToString().Equals("userId", StringComparison.InvariantCultureIgnoreCase));
-                int UserId = Int32.Parse(userId.Value);
+                UserId = Int32.Parse(userId.Value);
                 await this.noteBL.AddNote(UserId, noteModel);
                 return Ok(new { success = true, Message = "Note Created Successfully" });
             }
@@ -40,6 +40,19 @@ namespace Fundoonote_Ado.Net.Controllers
                 throw ex;
             }
         }
-
+        [HttpGet("GetAllNotes")]
+        public IActionResult GetAllNotes()
+        {
+            try
+            {
+                List<NoteResponseModel> users = new List<NoteResponseModel>();
+                users = this.noteBL.GetAllNotes();
+                return Ok(new { success = true, Message = "All Notes fetch successfully", data = users });
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }

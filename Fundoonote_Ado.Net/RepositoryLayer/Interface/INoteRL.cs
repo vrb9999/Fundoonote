@@ -9,5 +9,6 @@ namespace RepositoryLayer.Interface
     public interface INoteRL
     {
         Task AddNote(int UserId, NoteModel noteModel);
+        public List<NoteResponseModel> GetAllNotes();
     }
 }

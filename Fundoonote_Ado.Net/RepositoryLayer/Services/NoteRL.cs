@@ -37,7 +37,7 @@ namespace RepositoryLayer.Services
                     SqlDataReader rd = com.ExecuteReader();
                     if (rd.Read())
                     {
-                        NodeResponseModel response = new NodeResponseModel();
+                        NoteResponseModel response = new NoteResponseModel();
                         response.NoteId = rd["NoteId"] == DBNull.Value ? default : rd.GetInt32("NoteId");
                         response.Title = rd["Title"] == DBNull.Value ? default : rd.GetString("Title");
                         response.Description = rd["Description"] == DBNull.Value ? default : rd.GetString("Description");
@@ -51,6 +51,46 @@ namespace RepositoryLayer.Services
                         response.Remainder = rd["Remainder"] == DBNull.Value ? default : rd.GetDateTime("Remainder");
                         response.ModifiedDate = rd["ModifiedDate"] == DBNull.Value ? default : rd.GetDateTime("ModifiedDate");
                     }
+
+                }
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        public List<NoteResponseModel> GetAllNotes()
+        {
+
+            List<NoteResponseModel> notes = new List<NoteResponseModel>();
+            SqlConnection connection = new SqlConnection(connectionString);
+            try
+            {
+                using (connection)
+                {
+                    connection.Open();
+                    SqlCommand com = new SqlCommand("spGetAllNotes", connection);
+                    com.CommandType = CommandType.StoredProcedure;
+                    SqlDataReader reader = com.ExecuteReader();
+                    while (reader.Read())
+                    {
+                        NoteResponseModel note = new NoteResponseModel();
+                        note.NoteId = reader["NoteId"] == DBNull.Value ? default : reader.GetInt32("NoteId");
+                        note.Title = reader["Title"] == DBNull.Value ? default : reader.GetString("Title");
+                        note.Description = reader["Description"] == DBNull.Value ? default : reader.GetString("Description");
+                        note.Bgcolor = reader["Bgcolor"] == DBNull.Value ? default : reader.GetString("Bgcolor");
+                        note.IsPin = reader["IsPin"] == DBNull.Value ? default : reader.GetBoolean("IsPin");
+                        note.IsArchive = reader["IsArchive"] == DBNull.Value ? default : reader.GetBoolean("IsArchive");
+                        note.IsRemainder = reader["IsRemainder"] == DBNull.Value ? default : reader.GetBoolean("IsRemainder");
+                        note.IsTrash = reader["IsTrash"] == DBNull.Value ? default : reader.GetBoolean("IsTrash");
+                        note.UserId = reader["UserId"] == DBNull.Value ? default : reader.GetInt32("UserId");
+                        note.RegisteredDate = reader["RegisteredDate"] == DBNull.Value ? default : reader.GetDateTime("RegisteredDate");
+                        note.Remainder = reader["Remainder"] == DBNull.Value ? default : reader.GetDateTime("Remainder");
+                        note.ModifiedDate = reader["ModifiedDate"] == DBNull.Value ? default : reader.GetDateTime("ModifiedDate");
+
+                        notes.Add(note);
+                    }
+                    return notes;
 
                 }
             }

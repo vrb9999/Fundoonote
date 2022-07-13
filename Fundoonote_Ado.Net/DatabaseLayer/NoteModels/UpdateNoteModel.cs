@@ -4,9 +4,8 @@ using System.Text;
 
 namespace DatabaseLayer.NoteModels
 {
-    public class NodeResponseModel
+    public class UpdateNoteModel
     {
-        public int NoteId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public string Bgcolor { get; set; }
@@ -14,9 +13,5 @@ namespace DatabaseLayer.NoteModels
         public bool IsArchive { get; set; }
         public bool IsRemainder { get; set; }
         public bool IsTrash { get; set; }
-        public int UserId { get; set; }
-        public DateTime RegisteredDate { get; set; }
-        public DateTime Remainder { get; set; }
-        public DateTime ModifiedDate { get; set; }
     }
 }
